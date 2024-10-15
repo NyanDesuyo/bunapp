@@ -1,7 +1,15 @@
 import { Elysia } from "elysia";
+import { swagger } from "@elysiajs/swagger";
 
-const app = new Elysia().get("/", () => "Hello Elysia").listen(3000);
+import { todo } from "./instance/todo";
 
-console.log(
-  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
-);
+const app = new Elysia()
+  // *  Apply the swagger plugin
+  .use(swagger())
+  .use(todo)
+  .onError(({ code }) => {
+    if (code === "NOT_FOUND") {
+      return "Route not found :(";
+    }
+  })
+  .listen(8080);
